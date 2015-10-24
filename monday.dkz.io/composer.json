@@ -1,0 +1,15 @@
+{
+    "name": "davidkryzaniak/monday.dkz.io",
+    "description": "MONSTER MONDAY",
+    "require": {
+        "twilio/sdk": "~4.5"
+    },
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "David Kryzaniak",
+            "email": "david@kryzaniak.com"
+        }
+    ],
+    "minimum-stability": "stable"
+}
