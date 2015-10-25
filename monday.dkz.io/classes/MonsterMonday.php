@@ -31,7 +31,7 @@ class MonsterMonday {
 		$this->_db_name = CONST_DB_NAME;
 		$this->_db_pass = CONST_DB_PASS;
 
-		$this->order = unserialize(CONST_USER_LIST);
+		$this->order = json_decode(CONST_USER_LIST,TRUE);
 
 		$this->beginningOfTime = strtotime('2015-10-11 00:00:00'); //note, this was a Sunday
 		$this->weekCount = floor((strtotime(date('Y-m-d 00:00:00')) - $this->beginningOfTime ) / 604800); //nth week of monster monday
@@ -81,8 +81,8 @@ class MonsterMonday {
 	public function setSendMessageToAll($message,$exceptNumber = NULL)
 	{
 		foreach($this->getAllPhoneNumbers() as $key=>$contact){
-			if ($exceptNumber != $contact['number']) {
-				$this->setSendMessage($contact['number'],$message);
+			if ($exceptNumber != $contact) {
+				$this->setSendMessage($contact,$message);
 			}
 		}
 	}

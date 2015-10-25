@@ -7,7 +7,6 @@
  */
 
 require_once(__DIR__.'/../classes/MonsterMonday.php');
-date_default_timezone_set('America/Chicago');
 
 $mm = new MonsterMonday();
 
@@ -22,7 +21,7 @@ $TIME_LAST_CALL = 64875; //6:15pm
 if ( 7 == $dayOfWeekIs && $timeIs > 43000 && $timeIs < 64875 ) {
 
 	// is this the buyer?
-	$theBuyer = $mm->getNextWeekBuyer();
+	$theBuyer = $mm->getWeekBuyer();
 
 	$mm->setSendMessage($theBuyer['number'],'MONSTER MONDAY REMINDER: Ohh Snap! It\'s your turn to buy! Please reply YES or NO to confirm.');
 
@@ -34,7 +33,7 @@ if ( 7 == $dayOfWeekIs && $timeIs > 43000 && $timeIs < 64875 ) {
 if ( 7 == $dayOfWeekIs && $timeIs >  64975 && $mm->getIsWeekStatusSet() === NULL) {
 
 	// is this the buyer?
-	$theBuyer = $mm->getNextWeekBuyer();
+	$theBuyer = $mm->getWeekBuyer();
 
 	$mm->setSendMessageToAll("MONSTER MONDAY has been cancelled. {$theBuyer['name']} never replied to the reminder");
 

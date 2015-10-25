@@ -39,7 +39,7 @@ $mm->logMessage($receivedFrom,$messageBody);
 if ( 7 == $dayOfWeekIs && $timeIs > 43200 && $timeIs < 64875 ) {
 
 	// is this the buyer?
-	$theBuyer = $mm->getNextWeekBuyer();
+	$theBuyer = $mm->getWeekBuyer();
 	if ($theBuyer['number'] == $receivedFrom) {
 
 		// check to make sure they have not verified already
@@ -89,7 +89,7 @@ if( 'list' == strtolower(substr($messageBody,0,4)) ){
 
 // Does this message start with "Next"
 if( 'next' == strtolower(substr($messageBody,0,4)) ){
-	$found = $mm->getNextWeekBuyer();
+	$found = $mm->getWeekBuyer();
 	$mm->setSendMessage($receivedFrom,"{$found['name']} is on Monster Monday duty for ".date('l, F jS',$found['weekOf']));
 	header($_SERVER['SERVER_PROTOCOL'] . ' OK', true, 200);exit;
 }
