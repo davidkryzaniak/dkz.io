@@ -80,7 +80,7 @@ if( 'list' == strtolower(substr($messageBody,0,4)) ){
 	$list = $mm->getShoppingList();
 
 	//interesting use of native PHP functions
-	$list = http_build_query($list,NULL,",\n");
+	//$list = http_build_query($list,NULL,",\n");
 
 	$mm->setSendMessage($receivedFrom,$list);
 	header($_SERVER['SERVER_PROTOCOL'] . ' OK', true, 200);exit;
