@@ -55,7 +55,12 @@ class MonsterMonday {
 
 	public function getShoppingList()
 	{
-		return array_count_values(array_map(function($foo){return $foo['type'];}, $this->order));
+		// return array_count_values(array_map(function($foo){return $foo['type'];}, $this->order));
+		$string="";
+		foreach($this->order as $single){
+			$string .= $single["name"] . ": " . $single["type"] . "\n";
+		}
+		return $string;
 	}
 
 	public function getAllPhoneNumbers()
