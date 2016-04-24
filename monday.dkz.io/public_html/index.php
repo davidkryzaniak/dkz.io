@@ -31,7 +31,8 @@
 			<h2 class="text-center">Available Commands:</h2>
 			<p><code>list</code> Shopping list for Monster Monday</p>
 			<p><code>next</code> Who's up next to buy</p>
-			<p><code>broadcast: <em>message</em></code> Text everyone</p>
+			<p><code>><em> message</em></code> Text everyone</p>
+			<p><code>GIF<em> keyword keyword keyword</em></code> Sends a Giphy image to the group</p>
 			<hr>
 		</div>
 	</div>
@@ -41,15 +42,20 @@
 		$mm = new MonsterMonday();
 		$messages = $mm->getNewestMessages();
 	?>
+	
+	<h4 class="text-center">This is week #<?= $mm->getWeekCount();?> - It's <?= $mm->getWeekBuyer()['name'];?>'s Turn to buy.</h4>
+
+	<?= var_dump($mm->setWeekStatus(TRUE));?>
+	
 	<div class="content">
 		<?php if(count($messages)): foreach($messages as $single): ?>
-			<div class="row">
+			<div id="row-<?=$single['id'];?>" class="row">
 				<div class="col-md-6 col-md-offset-3">
 					<div class="testimonials">
 						<div class="active item">
 							<blockquote>
 								<p><?=$single['message'];?></p>
-								<h5 class="">
+								<h5>
 									<span class="testimonials-name"><?=$mm->getNameByNumber($single['phone']);?></span>
 									<small>Sent <?= date('Y-m-d H:i:s',strtotime($single["timestamp"]));?></small>
 								</h5>

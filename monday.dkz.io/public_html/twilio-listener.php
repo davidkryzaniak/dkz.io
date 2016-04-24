@@ -43,14 +43,14 @@ if ( 7 == $dayOfWeekIs && $timeIs > 43200 && $timeIs < 64875 ) {
 	if ($theBuyer['number'] == $receivedFrom) {
 
 		// check to make sure they have not verified already
-		if (NULL !== $mm->getIsWeekStatusSet()) {
-			$mm->setSendMessage($receivedFrom,'Sorry, you\'ve already replied a status for this week!');
-			header($_SERVER['SERVER_PROTOCOL'] . ' OK', true, 200);exit;
-		}
+		//if (NULL !== $mm->getIsWeekStatusSet()) {
+		//	$mm->setSendMessage($receivedFrom,'Sorry, you\'ve already replied a status for this week!');
+		//	header($_SERVER['SERVER_PROTOCOL'] . ' OK', true, 200);exit;
+		//}
 
 
 		// is this a confirmation from the buyer?
-		if ('yes' == strtolower(substr($messageBody,0,4))) {
+		if ('yes' == strtolower(substr(trim($messageBody),0,4))) {
 			$mm->setSendMessageToAll("Kudos to {$theBuyer['name']}! Monster Monday is a go.");
 
 			$mm->setWeekStatus(TRUE); // mark this week as a success
@@ -94,10 +94,27 @@ if( 'next' == strtolower(substr($messageBody,0,4)) ){
 	header($_SERVER['SERVER_PROTOCOL'] . ' OK', true, 200);exit;
 }
 
-// Brodcast, send to all expect the sender
-if( 'broadcast' == strtolower(substr($messageBody,0,9)) ){
-	$messageBody = substr($messageBody,9);
-	$messageBody = trim(trim($messageBody,':'));
+// Does this message start with "gif"
+if( 'gif' == strtolower(substr($messageBody,0,3)) ){
+	$searchFor = trim(substr($messageBody,4));
+	$results = file_get_contents("http://api.giphy.com/v1/gifs/search?api_key=dc6zaTOxFJmzC&limit=1&q=".urlencode($searchFor));
+	$results = json_decode($results,TRUE);
+	if( !is_array($results) || !isset($results['data']) ){
+		$mm->setSendMessage($receivedFrom,"Sorry, no gifs found matching those keywords!");
+		header($_SERVER['SERVER_PROTOCOL'] . ' OK', true, 200);exit;
+	}
+	$mediaURL = $results['data'][0]['images']['original']['url'];
+	$mm->setSendMessageToAll("Sent by ".$mm->getNameByNumber($receivedFrom),NULL,$mediaURL);
+	header($_SERVER['SERVER_PROTOCOL'] . ' OK', true, 200);exit;
+}
+
+// Broadcast, send to all expect the sender
+if( 'broadcast' == strtolower(substr($messageBody,0,9)) || '>' == strtolower(substr($messageBody,0,1)) ){
+	//remove the word "broadcast"
+	if( 'broadcast' == strtolower(substr($messageBody,0,9)) ){
+		$messageBody = trim(substr($messageBody,9),':');
+	}
+	$messageBody = trim(trim($messageBody,'>'));
 	$mm->setSendMessageToAll($mm->getNameByNumber($receivedFrom).': '.$messageBody,$receivedFrom);
 	header($_SERVER['SERVER_PROTOCOL'] . ' OK', true, 200);exit;
 }

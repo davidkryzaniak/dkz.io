@@ -10,6 +10,9 @@ require_once(__DIR__.'/../vendor/autoload.php');
 require_once(__DIR__.'/../../settings.php');
 date_default_timezone_set('America/Chicago');
 
+/**
+ * Class MonsterMonday
+ */
 class MonsterMonday {
 
 	private $_db_host = '';
@@ -55,7 +58,7 @@ class MonsterMonday {
 
 	public function getShoppingList()
 	{
-		// return array_count_values(array_map(function($foo){return $foo['type'];}, $this->order));
+		//return array_count_values(array_map(function($foo){return $foo['type'];}, $this->order));
 		$string="";
 		foreach($this->order as $single){
 			$string .= $single["name"] . ": " . $single["type"] . "\n";
@@ -83,21 +86,27 @@ class MonsterMonday {
 		return 'Unknown';
 	}
 
-	public function setSendMessageToAll($message,$exceptNumber = NULL)
+	public function setSendMessageToAll($message,$exceptNumber = NULL,$mediaUrl = NULL)
 	{
 		foreach($this->getAllPhoneNumbers() as $key=>$contact){
 			if ($exceptNumber != $contact) {
-				$this->setSendMessage($contact,$message);
+				$this->setSendMessage($contact,$message,$mediaUrl);
 			}
 		}
+	}
+
+	public function getWeekCount()
+	{
+		return $this->weekCount;
 	}
 
 	public function setWeekStatus($bool)
 	{
 		$dbh = $this->_connectToDatabase();
-		$stmt = $dbh->prepare("INSERT INTO weekly_status (week, status) VALUES (:week, :status) ON DUPLICATE KEY UPDATE status = :status");
-		$stmt->bindParam(':week', $this->weekCount);
-		$stmt->bindParam(':status', $bool);
+		$stmt = $dbh->prepare("INSERT INTO weekly_status (week, status) VALUES (:week, :status) ON DUPLICATE KEY UPDATE status = :statusnew");
+		$stmt->bindValue(':week', $this->weekCount);
+		$stmt->bindValue(':status', $bool);
+		$stmt->bindValue(':statusnew', $bool);
 		$stmt->execute();
 	}
 
@@ -111,10 +120,10 @@ class MonsterMonday {
 		return (!isset($results[0]['status']) ? NULL : (bool) $results[0]['status']);
 	}
 
-	public function setSendMessage($to,$message)
+	public function setSendMessage($to,$message,$mediaUrl = NULL)
 	{
 		$client = new Services_Twilio(twilio_sid, twilio_token);
-		$message = $client->account->messages->sendMessage( twilio_phone, $to, $message );
+		$message = $client->account->messages->sendMessage( twilio_phone, $to, $message, $mediaUrl );
 		return $message->sid;
 	}
 
@@ -126,9 +135,9 @@ class MonsterMonday {
 	public function getNewestMessages()
 	{
 		$dbh = $this->_connectToDatabase();
-		$stmt = $dbh->prepare("SELECT * FROM log LIMIT 20");
+		$stmt = $dbh->prepare("SELECT `id`,`phone`,`message`,`timestamp` FROM log ORDER BY `timestamp` DESC LIMIT 30");
 		$stmt->execute();
-		return array_reverse($stmt->fetchAll());
+		return $stmt->fetchAll();
 	}
 
 	public function logMessage($phone,$message)
