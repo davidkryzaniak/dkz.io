@@ -89,7 +89,7 @@ if( 'list' == strtolower(substr($messageBody,0,4)) ){
 
 // Does this message start with "Next"
 if( 'next' == strtolower(substr($messageBody,0,4)) ){
-	$found = $mm->getWeekBuyer();
+	$found = $mm->getNextWeekBuyer();
 	$mm->setSendMessage($receivedFrom,"{$found['name']} is on Monster Monday duty for ".date('l, F jS',$found['weekOf']));
 	header($_SERVER['SERVER_PROTOCOL'] . ' OK', true, 200);exit;
 }
